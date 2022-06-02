@@ -49,3 +49,4 @@ contract ERC20 is IERC20 {
         emit Transfer(msg.sender, address(0), amount);
     }
 }
+
