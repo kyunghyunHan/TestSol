@@ -1,14 +1,20 @@
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.13;
+// SPDX-License-Identifier: MIT
+// compiler version must be greater than or equal to 0.8.26 and less than 0.9.0
 
-contract Counter {
-    uint256 public number;
+pragma solidity ^0.8.26;
 
-    function setNumber(uint256 newNumber) public {
-        number = newNumber;
+contract Counter{
+    uint256 public count;
+    
+    function get() public view returns (uint256){
+        return count;
     }
 
-    function increment() public {
-        number++;
+    function inc() public {
+        count +=1;
+    }
+
+    function dec() public {
+        count -=1;
     }
 }
