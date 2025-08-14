@@ -45,6 +45,48 @@ contract Auction {
 
         emit Start();
     }
+    function bid() external payable {
+        require(started, "not started");
+        require(block.timestamp < end_at, "ended");
+        require(msg.value > highest_bid, "value < highest");
+        
+
+        //이전 최고 입찰자 등록
+        if (highest_bidder != address(0)) {
+            bids[highest_bidder] += highest_bid;
+        }
+
+        highest_bidder = msg.sender;
+        highest_bid = msg.value;
+
+        emit Bid(msg.sender, msg.value);
+    }  
+   //msg.sender = 함수를 호출한 주소
+   //인출
+   //낙찰대지 않은 사람 에게 돈 활불
+    function withdraw() external {
+        uint256 bal = bids[msg.sender];
+        bids[msg.sender] = 0;
+        payable(msg.sender).transfer(bal);
+
+        emit Withdraw(msg.sender, bal);
+    }
+    //판매자에게 최고 입찰 금액 전송
+    function end() external {
+        require(started, "not started");
+        require(block.timestamp >= end_at, "not ended");
+        require(!ended, "ended");
+
+        ended = true;
+        if (highest_bidder != address(0)) {
+            nft.safeTransferFrom(address(this), highest_bidder, nft_id);//안전하게 nft전송
+            seller.transfer(highest_bid);//이더 전송
+        } else {
+            nft.safeTransferFrom(address(this), seller, nft_id);
+        }
+
+        emit End(highest_bidder, highest_bid);
+    }
 }
 
 
